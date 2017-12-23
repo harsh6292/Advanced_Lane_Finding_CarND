@@ -88,11 +88,11 @@ Next I applied color and gradient thresholding to the Undistorted images.
 
 For gradient thresholding I applied Sobel operator from openCV and applied thresholding in both the 'x and 'y directions.
 
-For color thresholding, I used S-channel from HLS converted image and used V-channel from HSV converted image.
+For color thresholding, I used L and S-channel from HLS converted image. I also used R & G channel from image and calculate the White and Yellow color channels from the combination of R & G.
 
 I then created a combined binary of gradient and color thresholding.
 
-(The code for thresholding is in cell '9' of the IPython notebook.)
+(The code for thresholding is in cell '968 of the IPython notebook.)
 
 Here's an example of my output for this step (showing same image as above).
 
@@ -102,34 +102,26 @@ Here's an example of my output for this step (showing same image as above).
 ##### Perspective Transform
 Next I applied perspective transform on the thresholded image by using openCV getPerspectiveTransform() and warpPerspective() functions.
 
-The code for perspective transform is located in cell '10' of the notebook.
+The code for perspective transform is located in cell '969' of the notebook.
 
 I chose the hardcode the source and destination points in the following manner:
 
 ```python
 src = np.float32([
-      [200,720],
-      [453,547],
-      [835,547],
-      [1100,720] ])
+      [200, 720],
+      [570, 470],
+      [720, 470],
+      [1130, 720] ])
 
 offset = img.shape[1]/4
 
 dst = np.float32([
-      [320, 720],
-      [320, 590],
-      [960, 590],
-      [960, 720] ])
+      [350, 720],
+      [350, 590],
+      [980, 590],
+      [980, 720] ])
 ```
 
-This resulted in the following source and destination points:
-
-| Source        | Destination   |
-|:-------------:|:-------------:|
-| 200,720      | 320, 720        |
-| 453,547      | 320, 590      |
-| 835,547      | 960, 590      |
-| 1100,720     | 960, 720        |
 
 Here's an example of my output for this step (showing same image as above).
 
@@ -156,7 +148,7 @@ Then I fitted a 2nd order polynomial using these pixel values to create a contin
 
 ![alt text][im9]
 
-All the above result were obtained through code in cells (35, 66, 81) of the notebook.
+All the above result were obtained through code in cells (970, 971, 994) of the notebook.
 
 ##### Inverse Perspective Transform
 Since the above points depicted the lane lines correctly, I used openCV method of warpPerspective() and inverse matrix transformation to transform warped image back to original.
@@ -192,7 +184,7 @@ Here's a [link to my video result](./project_video_output.mp4)
 ### Discussion
 During my time working with this project, I found finding the correct gradient and color threshold is most important as it will affect which part of the image does actually contain the lines and which part are just shadows or very bright spots from sunlight or reflection of other cars.
 
-It took a long time for me to find a correct threshold values. I tried all thresholding mentioned in introduction like directional thresholding, magnitude thresholding and even using R-color and L-color channels in RGB and HLS color images, but they were not effective in isolating lane lines. In the end I just stuck to S and V color channels in HLS and HSV images.
+It took a long time for me to find a correct threshold values. I tried all thresholding mentioned in introduction like directional thresholding, magnitude thresholding and even using R-color and L-color channels in RGB and HLS color images, but they were not effective in isolating lane lines. In the end I used R & G color channels to make yellow and white binary representing yellow and white pixels. I used S color and L color channel too just to isolate shadows.
 
 The second difficult part was that I first used sliding window approach to find the lane lines. This turned out to be bit less accurate and involved lot of tracking of variables. I then switched to convolution method of finding lanes which gave better results compared to sliding window.
 
