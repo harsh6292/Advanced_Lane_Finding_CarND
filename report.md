@@ -44,7 +44,7 @@ All the code is written in an IPython notebook located
 
 ### Camera Calibration
 
-The camera calibration code is located in the cells (4, 5, 6) of the above IPython notebook.
+The camera calibration code is located in the cells (27, 28, 29) of the above IPython notebook.
 
 I start by creating 54 `object points` with each point having (x, y, z) coordinates. The chessboard has 9x6 inner corners due to which we have 54 points in total.
 
@@ -88,11 +88,11 @@ Next I applied color and gradient thresholding to the Undistorted images.
 
 For gradient thresholding I applied Sobel operator from openCV and applied thresholding in both the 'x and 'y directions.
 
-For color thresholding, I used L and S-channel from HLS converted image. I also used R & G channel from image and calculate the White and Yellow color channels from the combination of R & G.
+For color thresholding, I used HSV converted image to detect yellow lines and used RGB image to detect white lines.
 
 I then created a combined binary of gradient and color thresholding.
 
-(The code for thresholding is in cell '968 of the IPython notebook.)
+(The code for thresholding is in cell '98' of the IPython notebook.)
 
 Here's an example of my output for this step (showing same image as above).
 
@@ -102,7 +102,7 @@ Here's an example of my output for this step (showing same image as above).
 ##### Perspective Transform
 Next I applied perspective transform on the thresholded image by using openCV getPerspectiveTransform() and warpPerspective() functions.
 
-The code for perspective transform is located in cell '969' of the notebook.
+The code for perspective transform is located in cell '93' of the notebook.
 
 I chose the hardcode the source and destination points in the following manner:
 
@@ -148,7 +148,7 @@ Then I fitted a 2nd order polynomial using these pixel values to create a contin
 
 ![alt text][im9]
 
-All the above result were obtained through code in cells (970, 971, 994) of the notebook.
+All the above result were obtained through code in cells (94, 95) of the notebook.
 
 ##### Inverse Perspective Transform
 Since the above points depicted the lane lines correctly, I used openCV method of warpPerspective() and inverse matrix transformation to transform warped image back to original.
@@ -184,7 +184,7 @@ Here's a [link to my video result](./project_video_output.mp4)
 ### Discussion
 During my time working with this project, I found finding the correct gradient and color threshold is most important as it will affect which part of the image does actually contain the lines and which part are just shadows or very bright spots from sunlight or reflection of other cars.
 
-It took a long time for me to find a correct threshold values. I tried all thresholding mentioned in introduction like directional thresholding, magnitude thresholding and even using R-color and L-color channels in RGB and HLS color images, but they were not effective in isolating lane lines. In the end I used R & G color channels to make yellow and white binary representing yellow and white pixels. I used S color and L color channel too just to isolate shadows.
+It took a long time for me to find a correct threshold values. I tried all thresholding mentioned in introduction like directional thresholding, magnitude thresholding and even using R-color and L-color channels in RGB and HLS color images, but they were not effective in isolating lane lines. In the end I used HSV image to find yellow lines and RGB image to find white lines in the image.
 
 The second difficult part was that I first used sliding window approach to find the lane lines. This turned out to be bit less accurate and involved lot of tracking of variables. I then switched to convolution method of finding lanes which gave better results compared to sliding window.
 
@@ -192,8 +192,6 @@ The second difficult part was that I first used sliding window approach to find 
 I think the pipeline where it might fail would be areas where the objects around lane lines are very bright as compared to test images. In this case, the thresholding pipeline would certainly have various false positives and would make the car go off the road.
 
 This would also create issues when finding the window centers as the convoluted signal would give more range of pixels where lane is found.
-
-To make it more robust, I think I need to experiment with color and gradient thresholding more in order to better isolate lane lines from any abnormalities in the image caused by too much brightness etc.
 
 
 ### References
